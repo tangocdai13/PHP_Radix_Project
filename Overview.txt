@@ -1,0 +1,158 @@
+1. Phân tích giao diện website
+    +, Giao diện Radix: https://drive.google.com/file/d/1b4oGESOQgEqySveU3N3mxSMql_LJiONb/view?usp=sharing
+    +, Giao diện AdminLTE: https://drive.google.com/file/d/1BoTSURg-rZTpIk99T1znz8kCoINeb4Ff/view?usp=sharing
+
+2. Phân tích, thiết kế DATABASE
+    1. Table "options"
+       +, id int INCREMENT PRIMARY
+       +, opt_key varchar 100 NULL (key nhận biết biết giữa các option)
+       +, value text NULL (giá trị của option)
+       +, name varchar 200 NULL (tên hiển thị trên giao diện HTML)
+
+    2. Table "pages"
+        +, id int INCREMENT PRIMARY
+        +, title varchar 200 NULL
+        +, slug varchar 200 NULL
+        +, content text NULL
+        +, user_id int DEFAULT 0 foreign key id tới table 'users'
+        +, create_at datetime
+        +, update_at datetime
+
+    3. Table "contacts"
+        +, id int INCREMENT PRIMARY
+        +, fullname varchar 100 NULL
+        +, email varchar 100 NULL (người gửi liên hệ)
+        +, type_id int DEFAULT = 0 (id của phòng ban liên hệ) foreign key id tới table 'contact_type'
+        +, message text NULL (Nội dung tin nhắn liên hệ)
+        +, status tinyint DEFAULT = 0 (trạng thái xử lý tin liên hệ : 0 chưa | 1 đang | 2 đã)
+        +, note text NULL (chỉ admin mới note được)
+        +, create_at datetime
+        +, update_at datetime
+
+    4. Table "contact_type"
+        +, id int INCREMENT PRIMARY
+        +, name varchar 100 NULL (Tên phòng ban)
+        +, create_at datetime
+        +, update_at datetime
+
+    5. Table "services"
+        +, id int INCREMENT PRIMARY
+        +, name varchar 200 NULL
+        +, slug varchar 200 NULL
+        +, icon varchar 100 NULL (icon | avatar of service)
+        +, description text
+        +, content text NULL
+        +, user_id int DEFAULT 0  foreign key id tới table 'users'
+        +, create_at datetime
+        +, update_at datetime
+
+    6. Table "portfolio_categories"
+        +, id int INCREMENT PRIMARY
+        +, name varchar 100 NULL (tên danh mục)
+        +, user_id int DEFAULT 0  foreign key id tới table 'users'
+        +, create_at datetime
+        +, update_at datetime
+
+    7. Table "portfolios"
+        +, id int INCREMENT PRIMARY
+        +, name varchar 200 NULL (Tên dự án)
+        +, slug varchar 200 NULL
+        +, thumbnail varchar 100 NULL (Ảnh đại diện)
+        +, description text NULL
+        +, video varchar 100 NULL (Link video youtube)
+        +, content text NULL (Nội dung chi tiết của dự án)
+        +, user_id int DEFAULT 0 foreign key id tới table 'users'
+        +, portfolio_category DEFAULT = 0 int foreign key id tới table 'portfolio_categories' (id category)
+        +, create_at datetime
+        +, update_at datetime
+
+    8. Table "portfolio_images"
+        +, id int INCREMENT PRIMARY
+        +, portfolio_id int NOT NULL (id của dự án được lấy từ table portfolios) FOREIGN KEY id của table "portfolios"
+        +, image varchar 100 NULL
+        +, create_at datetime
+        +, update_at datetime
+
+    9. Table "blog_categories"
+        +, id int INCREMENT PRIMARY
+        +, name varchar 100 NULL
+        +, slug varchar 100 NULL
+        +, user_id int DEFAULT 0 foreign key id tới table 'users'
+        +, create_at datetime
+        +, update_at datetime
+
+    10. Table "blogs"
+        +, id int INCREMENT PRIMARY
+        +, title varchar 200 NULL
+        +, slug varchar 200 NULL
+        +, user_id int DEFAULT 0 foreign key id tới table 'users'
+        +, category_id int DEFAULT = 0 FOREIGN KEY id của table "blog_categories"
+        +, content text NULL
+        +, view_count int DEFAULT = 0
+        +, thumbnail varchar 100 NULL
+        +, description text NULL (mô tả ngắn của bài viết)
+        +, create_at datetime
+        +, update_at datetime
+
+    11. Table "subscribe"
+        +, id int INCREMENT PRIMARY
+        +, fullname varchar 100 NULL
+        +, email varchar 100 NULL
+        +, status tinyint DEFAULT = 0 (trạng thái xử lý tin liên hệ : 0 chưa | 1 đang | 2 đã)
+        +, create_at datetime
+        +, update_at datetime
+
+    12. Table "comments"
+        +, id int INCREMENT PRIMARY
+        +, name varchar 100 NULL (tên người gửi bình luận)
+        +, email varchar 100 NULL
+        +, website varchar 100 NULL
+        +, content text NULL (nội dung bình luận)
+        +, parent_id int DEFAULT = 0 (id của comment cha - reply comment)
+        +, blog_id int DEFAULT = 0 FOREIGN KEY id của table "blogs"
+        +, user_id int DEFAULT = 0 foreign key id tới table 'users' (của admin - rep;y comment)
+        +, status int DEFAULT = 0 (0: chưa duyệt, 1: đã duyệt - trạng thái bình luận xét duyệt)
+        +, create_at datetime
+        +, update_at datetime
+
+    13. Table "users"
+        +, id int INCREMENT PRIMARY
+        +, fullname varchar 100 NULL
+        +, email varchar 100 NULL
+        +, password varchar 100 NULL
+        +, about_content text NULL
+        +, contact_facebook varchar 100 NULL
+        +, contact_twitter varchar 100 NULL
+        +, contact_linkedin varchar 100 NULL
+        +, contact_pinterest varchar 100 NULL
+        +, forget_token varchar 100 NULL
+        +, group_id int DEFAULT = 0 (role chức vụ như Senior, ...) FOREIGN KEY id của table "groups"
+        +, status tinyint DEFAULT = 0 (0: inactive, 1: active)
+        +, last_activity datetime NULL
+        +, create_at datetime
+        +, update_at datetime
+
+    14. Table "login_token"
+        +, id int INCREMENT PRIMARY
+        +, user_id int DEFAULT = 0 FOREIGN KEY id của table "users"
+        +, token varchar 100 NULL
+        +, create_at datetime
+
+    15. Table "groups"
+        +, id int INCREMENT PRIMARY
+        +, name varchar 100 NULL (group name)
+        +, permission text NULL
+        +, user_id DEFAULT = 0
+        +, create_at datetime
+        +, update_at datetime
+
+3. Xây dựng cấu trúc folder, file cho project
+4. Xây dựng trang Admin
+    +, Ghép giao diện Admin
+    +, Phân tích modules trong trang admin
+    +, Code các chức năng của các Module
+5. Code Font-end Page
+6. Đẩy lên VPS / Hosting
+7. Phần mềm phân tích DB
+    +, https://dbdiagram.io/home (tạo bản vẽ)
+    +, PHP MyAdmin | Seque Pro | Mysql Workbench | Navicat (thiết kế, xây dựng DB)
